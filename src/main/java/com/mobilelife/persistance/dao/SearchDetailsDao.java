@@ -77,7 +77,7 @@ public class SearchDetailsDao {
 		try {
 			List<SearchDetails> resultList = null;
 
-			String query = "Select * from search_details where searchRequest like '%\"category\":\""+catagory+"\"%' and creation_datetime between '"+fromDt+"' and '"+toDt+"'";
+			String query = "Select * from search_details where searchRequest like '%\"category\":\""+catagory+"\"%' and creation_datetime between '"+fromDt+" 00:00:01' and '"+toDt+" 23:59:59'";
 			logger.debug("query in searchByCatagory in  search_details " + query);
 			resultList = new HibernateDAO().findBySQLQuery(session, SearchDetails.class, query,"search_details");
 

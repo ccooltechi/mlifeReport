@@ -356,6 +356,8 @@ div.hidden {
 
 									<div id="<%=mentry.getKey()%>" class="hidden">
 <%
+		if (null!=searchDetailsList)
+		{
 	       for (int i=0;i<searchDetailsList.size();i++)
 	       {
 	    	   SearchDetails searchDetails = searchDetailsList.get(i);
@@ -366,6 +368,7 @@ div.hidden {
 					<%=searchDetails.getSearchRequest()%></div>
 	    	   </div>
 <%       	}
+		}
 %>
 			</div>
 <%    

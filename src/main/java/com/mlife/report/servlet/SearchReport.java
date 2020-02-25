@@ -2,6 +2,7 @@ package com.mlife.report.servlet;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +47,10 @@ public class SearchReport extends HttpServlet {
 	    java.text.DateFormat format = new java.text.SimpleDateFormat("MM/dd/yyyy");
 	    try {
 	        //java.util.Date d = df.parse(Date);
-	        Date daFrom = format.parse(dateFrom);
-	        Date daTo = format.parse(dateTo);
+	        Date daFrom1 = format.parse(dateFrom);
+	        Date daFrom = addHoursToJavaUtilDate(daFrom1,0,0);
+	        Date daTo1 = format.parse(dateTo);
+	        Date daTo = addHoursToJavaUtilDate(daFrom1,23,59);
 	        Report rpt = new Report();
 	        HashMap<String, List<SearchDetails>> responseHM = rpt.getSearchRequests(daFrom, daTo);
 	        session.setAttribute("reponseHM", responseHM);
@@ -61,6 +64,13 @@ public class SearchReport extends HttpServlet {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
+	public Date addHoursToJavaUtilDate(Date date, int hours, int mins) {
+	    Calendar calendar = Calendar.getInstance();
+	    calendar.setTime(date);
+	    calendar.add(Calendar.HOUR_OF_DAY, hours);
+	    calendar.add(Calendar.MINUTE, mins);
+	    return calendar.getTime();
+	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
