@@ -29,6 +29,8 @@ public class UserInfoRequest {
 	private String latitude;
     @XmlAttribute
 	private String ssoUserID;
+    @XmlAttribute
+	private String userEmail;
 	/**
 	 * @return the location
 	 */
@@ -149,4 +151,12 @@ public class UserInfoRequest {
 	public void setSsoUserID(String ssoUserID) {
 		this.ssoUserID = ssoUserID;
 	}
+	
+	public String getUserEmail() {
+		return userEmail;
+	}
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+	
 }

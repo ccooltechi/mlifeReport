@@ -1,18 +1,13 @@
 package com.mlife.report.pojo;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mobilelife.api.beans.SearchRequest;
 import com.mobilelife.persistance.dao.SearchDetailsDao;
 import com.mobilelife.persistance.entities.SearchDetails;
 
@@ -49,50 +44,27 @@ public class Report {
 		{
 			searchRequestList = new ArrayList<SearchDetails>();
 			for(SearchDetails item : searchDetails){
-//				SearchRequest searchRequest = new SearchRequest();
-//				searchRequest = (SearchRequest) convertJsonToObject(item.getSearchRequest(), searchRequest);
 				searchRequestList.add(item);
 			}
 		}
 		return searchRequestList;
 	}
 
-	private List<SearchRequest> mapSearchRequestOLD(List<SearchDetails> searchDetails) {
-
-		List<SearchRequest> searchRequestList = null;
-		if (null!=searchDetails)
-		{
-			searchRequestList = new ArrayList<SearchRequest>();
-			for(SearchDetails item : searchDetails){
-				SearchRequest searchRequest = new SearchRequest();
-				searchRequest = (SearchRequest) convertJsonToObject(item.getSearchRequest(), searchRequest);
-				searchRequestList.add(searchRequest);
-			}
-		}
-		return searchRequestList;
-	}
-
-	public Object convertJsonToObject(String jsonString, Object javaObject)
-	{
-        ObjectMapper mapper = new ObjectMapper();
-        Object returnObject = null; 
-        try
-        {
-        	logger.debug("convertJsonToObject jsonString"+jsonString);
-        	if (javaObject instanceof SearchRequest)
-        		returnObject = mapper.readValue(jsonString, SearchRequest.class);
-        }
-        catch (JsonGenerationException e)
-        {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }	
-        return returnObject;
-	}
-
+//	private List<SearchRequest> mapSearchRequestOLD(List<SearchDetails> searchDetails) {
+//
+//		List<SearchRequest> searchRequestList = null;
+//		if (null!=searchDetails)
+//		{
+//			searchRequestList = new ArrayList<SearchRequest>();
+//			for(SearchDetails item : searchDetails){
+//				SearchRequest searchRequest = new SearchRequest();
+//				searchRequest = (SearchRequest) convertJsonToObject(item.getSearchRequest(), searchRequest);
+//				searchRequestList.add(searchRequest);
+//			}
+//		}
+//		return searchRequestList;
+//	}
+//
 	public static void main(String[] args) {
 		Report rpt = new Report();
 //		rpt.getSearchRequests();

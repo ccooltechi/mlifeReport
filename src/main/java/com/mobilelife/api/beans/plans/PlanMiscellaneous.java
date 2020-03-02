@@ -23,6 +23,8 @@ public class PlanMiscellaneous {
     private String how_to_subscribe_info; 
     @XmlAttribute
     private String how_to_unsubscribe_info;
+    @XmlAttribute
+    private String early_termination_fees;
 	/**
 	 * @return the sim_activation_info
 	 */
@@ -106,6 +108,18 @@ public class PlanMiscellaneous {
 	 */
 	public void setHow_to_unsubscribe_info(String how_to_unsubscribe_info) {
 		this.how_to_unsubscribe_info = how_to_unsubscribe_info;
+	}
+	/**
+	 * @return the early_termination_fees
+	 */
+	public String getEarly_termination_fees() {
+		return early_termination_fees;
+	}
+	/**
+	 * @param early_termination_fees the early_termination_fees to set
+	 */
+	public void setEarly_termination_fees(String early_termination_fees) {
+		this.early_termination_fees = early_termination_fees;
 	}
 
 }
