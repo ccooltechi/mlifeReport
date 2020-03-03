@@ -1,15 +1,13 @@
 package com.mlife.report.pojo;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -20,7 +18,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +74,7 @@ public class WriteDataToExcel {
 			{
 			      Map < String, Object[] > empinfo = new TreeMap < String, Object[] >();
 				String seperator=",";
-				String header = "Authtoken,AppID,Location,Device,BrowserType,Ipaddress,Mobileno,Mobileinfo,Longitude,Latitude,SsoUserID,UserEmail,Category,Country,Nationality,Sortby,SaveFilter,Contract,Data,DataOnly,FilterConstant,FilterType,MonthlyBud,PrepaidInline,SocialData,Dataperpage,PageNumber,AutoRenew,Flexi,International,National,CallPlanType,Countries,DeviceBrand,DeviceColor,DeviceMemory,DeviceModels,Operators,PrepaidTypeFilter,RechargeFrequency";
+				String header = "SearchDate,Authtoken,AppID,Location,Device,BrowserType,Ipaddress,Mobileno,Mobileinfo,Longitude,Latitude,SsoUserID,UserEmail,Category,Country,Nationality,Sortby,SaveFilter,Contract,Data,DataOnly,FilterConstant,FilterType,MonthlyBud,PrepaidInline,SocialData,Dataperpage,PageNumber,AutoRenew,Flexi,International,National,CallPlanType,Countries,DeviceBrand,DeviceColor,DeviceMemory,DeviceModels,Operators,PrepaidTypeFilter,RechargeFrequency";
 				String[] headerArray = header.split(",");
 				empinfo.put(""+count++, headerArray);
 				for (int i=0;i<searchDetailsList.size();i++)
@@ -85,127 +82,145 @@ public class WriteDataToExcel {
 					StringBuilder sheetSB = new StringBuilder();
 		    	   SearchDetails searchDetails = searchDetailsList.get(i);
 		    	   SearchRequest searchRequest = convertJsonToObject(searchDetails.getSearchRequest());
-//		    	   sheetSB.append("\"");
-		    	   sheetSB.append(searchRequest.getAuthtoken());
-		    	   sheetSB.append(seperator+searchRequest.getAppID());
-		    	   
-		    	   sheetSB.append(seperator+searchRequest.getUser_info().getLocation());
-		    	   sheetSB.append(seperator+searchRequest.getUser_info().getDevice());
-		    	   sheetSB.append(seperator+searchRequest.getUser_info().getBrowserType());
-		    	   sheetSB.append(seperator+searchRequest.getUser_info().getIpaddress());
-		    	   sheetSB.append(seperator+searchRequest.getUser_info().getMobileno());
-		    	   sheetSB.append(seperator+searchRequest.getUser_info().getMobileinfo());
-		    	   sheetSB.append(seperator+searchRequest.getUser_info().getLongitude());
-		    	   sheetSB.append(seperator+searchRequest.getUser_info().getLatitude());
-		    	   sheetSB.append(seperator+searchRequest.getUser_info().getSsoUserID());
-		    	   sheetSB.append(seperator+searchRequest.getUser_info().getUserEmail());
-		    	   
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getCategory());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getCountry());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getNationality());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getSortby());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getSaveFilter());
-		    	   
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getContract());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getData());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getDataOnly());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getFilterConstant());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getFilterType());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getMonthlyBudget());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getPrepaidInline());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getSocialData());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getDataperpage());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getPageNumber());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getAutoRenew());
-
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getCall_mins().getFlexi());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getCall_mins().getInternational());
-		    	   sheetSB.append(seperator+searchRequest.getSearch_criteria().getFilters().getCall_mins().getNational());
-		    	   
-		    	   try {
-			    	   List<FilterReq> filterReqList = searchRequest.getSearch_criteria().getFilters().getCallPlanType().getFilterReq();
-			    	   StringBuffer callplantypeFilterSB = new StringBuffer();
-			    	   for (FilterReq eachObj : filterReqList)
+		    	   if (null!=searchRequest)
+		    	   {
+		    		   
+			    	   sheetSB.append(searchDetails.getCreationDatetime()+"");
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getAuthtoken()).orElse(""));
+			    	   sheetSB.append(Optional.ofNullable(seperator+searchRequest.getAppID()).orElse(""));
+			    	   if (null!=searchRequest.getUser_info())
 			    	   {
-			    		   callplantypeFilterSB.append(eachObj.getFilter()+"|");
+				    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getUser_info().getLocation()).orElse(""));
+				    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getUser_info().getDevice()).orElse(""));
+				    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getUser_info().getBrowserType()).orElse(""));
+				    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getUser_info().getIpaddress()).orElse(""));
+				    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getUser_info().getMobileno()).orElse(""));
+				    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getUser_info().getMobileinfo()).orElse(""));
+				    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getUser_info().getLongitude()).orElse(""));
+				    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getUser_info().getLatitude()).orElse(""));
+				    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getUser_info().getSsoUserID()).orElse(""));
+				    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getUser_info().getUserEmail()).orElse(""));
 			    	   }
-			    	   sheetSB.append(seperator+callplantypeFilterSB);
-		    	   }catch(Exception ex) {sheetSB.append(seperator);}
-		    	   try {
-			    	   List<Country> countryList = searchRequest.getSearch_criteria().getFilters().getCountries().getCountry();
-			    	   StringBuffer countryListFilterSB = new StringBuffer();
-			    	   for (Country eachObj : countryList)
+			    	   else
 			    	   {
-			    		   countryListFilterSB.append(eachObj.getCountryCode()+"|");
+				    	   sheetSB.append(seperator);
+				    	   sheetSB.append(seperator);
+				    	   sheetSB.append(seperator);
+				    	   sheetSB.append(seperator);
+				    	   sheetSB.append(seperator);
+				    	   sheetSB.append(seperator);
+				    	   sheetSB.append(seperator);
+				    	   sheetSB.append(seperator);
+				    	   sheetSB.append(seperator);
+				    	   sheetSB.append(seperator);
 			    	   }
-			    	   sheetSB.append(seperator+countryListFilterSB);
-		    	   }catch(Exception ex) {sheetSB.append(seperator);}
-		    	   try {
-			    	   List<DeviceFilter> deviceFilterList= searchRequest.getSearch_criteria().getFilters().getDeviceBrand().getDeviceFilter();
-			    	   StringBuffer deviceBrandSB = new StringBuffer();
-			    	   for (DeviceFilter eachObj : deviceFilterList)
-			    	   {
-			    		   deviceBrandSB.append(eachObj.getFilter()+"|");
-			    	   }
-			    	   sheetSB.append(seperator+deviceBrandSB);
-		    	   }catch(Exception ex) {sheetSB.append(seperator);}
-		    	   try {
-		    		   List<DeviceFilter> deviceFilterList= searchRequest.getSearch_criteria().getFilters().getDeviceColor().getDeviceFilter();
-			    	   StringBuffer deviceColorSB = new StringBuffer();
-			    	   for (DeviceFilter eachObj : deviceFilterList)
-			    	   {
-			    		   deviceColorSB.append(eachObj.getFilter()+"|");
-			    	   }
-			    	   sheetSB.append(seperator+deviceColorSB);
-		    	   }catch(Exception ex) {sheetSB.append(seperator);}
-		    	   try {
-		    		   List<DeviceFilter> deviceFilterList= searchRequest.getSearch_criteria().getFilters().getDeviceMemory().getDeviceFilter();
-			    	   StringBuffer deviceMemorySB = new StringBuffer();
-			    	   for (DeviceFilter eachObj : deviceFilterList)
-			    	   {
-			    		   deviceMemorySB.append(eachObj.getFilter()+"|");
-			    	   }
-			    	   sheetSB.append(seperator+deviceMemorySB);
-		    	   }catch(Exception ex) {sheetSB.append(seperator);}
-		    	   try {
-		    		   List<DeviceFilter> deviceFilterList= searchRequest.getSearch_criteria().getFilters().getDeviceModels().getDeviceFilter();
-			    	   StringBuffer deviceModelSB = new StringBuffer();
-			    	   for (DeviceFilter eachObj : deviceFilterList)
-			    	   {
-			    		   deviceModelSB.append(eachObj.getFilter()+"|");
-			    	   }
-			    	   sheetSB.append(seperator+deviceModelSB);
-		    	   }catch(Exception ex) {sheetSB.append(seperator);}
-		    	   try {
-			    	   List<Operator> operatorList = searchRequest.getSearch_criteria().getFilters().getOperators().getOperator();
-			    	   StringBuffer operatorSB = new StringBuffer();
-			    	   for (Operator eachObj : operatorList)
-			    	   {
-			    		   operatorSB.append(eachObj.getOperators_name()+"|");
-			    	   }
-			    	   sheetSB.append(seperator+operatorSB);
-		    	   }catch(Exception ex) {sheetSB.append(seperator);}
-		    	   try {
-			    	   List<FilterReq> prepaidTypeList = searchRequest.getSearch_criteria().getFilters().getPrepaidTypeFilter().getFilterReq();
-			    	   StringBuffer prepaidSB = new StringBuffer();
-			    	   for (FilterReq eachObj : prepaidTypeList)
-			    	   {
-			    		   prepaidSB.append(eachObj.getFilter()+"|");
-			    	   }
-			    	   sheetSB.append(seperator+prepaidSB);
-		    	   }catch(Exception ex) {sheetSB.append(seperator);}
-		    	   try {
-			    	   List<FilterReq> rechargeList = searchRequest.getSearch_criteria().getFilters().getRechargeFrequency().getFilterReq();
-			    	   StringBuffer rechargeSB = new StringBuffer();
-			    	   for (FilterReq eachObj : rechargeList)
-			    	   {
-			    		   rechargeSB.append(eachObj.getFilter()+"|");
-			    	   }
-			    	   sheetSB.append(seperator+rechargeSB);
-		    	   }catch(Exception ex) {sheetSB.append(seperator);}
-//		    	   sheetSB.append("\"");
-//		    	   logger.debug("SheetSB : "+sheetSB.toString());
-					empinfo.put(""+count++, sheetSB.toString().split(","));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getCategory()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getCountry()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getNationality()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getSortby()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getSaveFilter()).orElse(""));
+			    	   
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getContract()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getData()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getDataOnly()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getFilterConstant()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getFilterType()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getMonthlyBudget()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getPrepaidInline()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getSocialData()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getDataperpage()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getPageNumber()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getAutoRenew()).orElse(""));
+	
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getCall_mins().getFlexi()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getCall_mins().getInternational()).orElse(""));
+			    	   sheetSB.append(seperator+Optional.ofNullable(searchRequest.getSearch_criteria().getFilters().getCall_mins().getNational()).orElse(""));
+			    	   
+			    	   try {
+				    	   List<FilterReq> filterReqList = searchRequest.getSearch_criteria().getFilters().getCallPlanType().getFilterReq();
+				    	   StringBuffer callplantypeFilterSB = new StringBuffer();
+				    	   for (FilterReq eachObj : filterReqList)
+				    	   {
+				    		   callplantypeFilterSB.append(eachObj.getFilter()+"|");
+				    	   }
+				    	   sheetSB.append(seperator+callplantypeFilterSB);
+			    	   }catch(Exception ex) {sheetSB.append(seperator);}
+			    	   try {
+				    	   List<Country> countryList = searchRequest.getSearch_criteria().getFilters().getCountries().getCountry();
+				    	   StringBuffer countryListFilterSB = new StringBuffer();
+				    	   for (Country eachObj : countryList)
+				    	   {
+				    		   countryListFilterSB.append(eachObj.getCountryCode()+"|");
+				    	   }
+				    	   sheetSB.append(seperator+countryListFilterSB);
+			    	   }catch(Exception ex) {sheetSB.append(seperator);}
+			    	   try {
+				    	   List<DeviceFilter> deviceFilterList= searchRequest.getSearch_criteria().getFilters().getDeviceBrand().getDeviceFilter();
+				    	   StringBuffer deviceBrandSB = new StringBuffer();
+				    	   for (DeviceFilter eachObj : deviceFilterList)
+				    	   {
+				    		   deviceBrandSB.append(eachObj.getFilter()+"|");
+				    	   }
+				    	   sheetSB.append(seperator+deviceBrandSB);
+			    	   }catch(Exception ex) {sheetSB.append(seperator);}
+			    	   try {
+			    		   List<DeviceFilter> deviceFilterList= searchRequest.getSearch_criteria().getFilters().getDeviceColor().getDeviceFilter();
+				    	   StringBuffer deviceColorSB = new StringBuffer();
+				    	   for (DeviceFilter eachObj : deviceFilterList)
+				    	   {
+				    		   deviceColorSB.append(eachObj.getFilter()+"|");
+				    	   }
+				    	   sheetSB.append(seperator+deviceColorSB);
+			    	   }catch(Exception ex) {sheetSB.append(seperator);}
+			    	   try {
+			    		   List<DeviceFilter> deviceFilterList= searchRequest.getSearch_criteria().getFilters().getDeviceMemory().getDeviceFilter();
+				    	   StringBuffer deviceMemorySB = new StringBuffer();
+				    	   for (DeviceFilter eachObj : deviceFilterList)
+				    	   {
+				    		   deviceMemorySB.append(eachObj.getFilter()+"|");
+				    	   }
+				    	   sheetSB.append(seperator+deviceMemorySB);
+			    	   }catch(Exception ex) {sheetSB.append(seperator);}
+			    	   try {
+			    		   List<DeviceFilter> deviceFilterList= searchRequest.getSearch_criteria().getFilters().getDeviceModels().getDeviceFilter();
+				    	   StringBuffer deviceModelSB = new StringBuffer();
+				    	   for (DeviceFilter eachObj : deviceFilterList)
+				    	   {
+				    		   deviceModelSB.append(eachObj.getFilter()+"|");
+				    	   }
+				    	   sheetSB.append(seperator+deviceModelSB);
+			    	   }catch(Exception ex) {sheetSB.append(seperator);}
+			    	   try {
+				    	   List<Operator> operatorList = searchRequest.getSearch_criteria().getFilters().getOperators().getOperator();
+				    	   StringBuffer operatorSB = new StringBuffer();
+				    	   for (Operator eachObj : operatorList)
+				    	   {
+				    		   operatorSB.append(eachObj.getOperators_name()+"|");
+				    	   }
+				    	   sheetSB.append(seperator+operatorSB);
+			    	   }catch(Exception ex) {sheetSB.append(seperator);}
+			    	   try {
+				    	   List<FilterReq> prepaidTypeList = searchRequest.getSearch_criteria().getFilters().getPrepaidTypeFilter().getFilterReq();
+				    	   StringBuffer prepaidSB = new StringBuffer();
+				    	   for (FilterReq eachObj : prepaidTypeList)
+				    	   {
+				    		   prepaidSB.append(eachObj.getFilter()+"|");
+				    	   }
+				    	   sheetSB.append(seperator+prepaidSB);
+			    	   }catch(Exception ex) {sheetSB.append(seperator);}
+			    	   try {
+				    	   List<FilterReq> rechargeList = searchRequest.getSearch_criteria().getFilters().getRechargeFrequency().getFilterReq();
+				    	   StringBuffer rechargeSB = new StringBuffer();
+				    	   for (FilterReq eachObj : rechargeList)
+				    	   {
+				    		   rechargeSB.append(eachObj.getFilter()+"|");
+				    	   }
+				    	   sheetSB.append(seperator+rechargeSB);
+			    	   }catch(Exception ex) {sheetSB.append(seperator);}
+	//		    	   sheetSB.append("\"");
+	//		    	   logger.debug("SheetSB : "+sheetSB.toString());
+						empinfo.put(""+count++, sheetSB.toString().split(","));
+		    	   }
 		       	}
 				empinfoMaster.put((String)mentry.getKey(), empinfo);
 			}
