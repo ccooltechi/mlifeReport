@@ -8,12 +8,16 @@ package com.mobilelife.persistance.entities;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,17 +25,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author pods
+ * @author deepakupadhyay
  */
 @Entity
-@Table(name = "search_details", catalog = "telcomis", schema = "")
+@Table(name = "search_details")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "SearchDetails.findAll", query = "SELECT s FROM SearchDetails s")
     , @NamedQuery(name = "SearchDetails.findById", query = "SELECT s FROM SearchDetails s WHERE s.id = :id")
-    , @NamedQuery(name = "SearchDetails.findBySsoUserId", query = "SELECT s FROM SearchDetails s WHERE s.ssoUserId = :ssoUserId")
     , @NamedQuery(name = "SearchDetails.findByTokenid", query = "SELECT s FROM SearchDetails s WHERE s.tokenid = :tokenid")
     , @NamedQuery(name = "SearchDetails.findByAppid", query = "SELECT s FROM SearchDetails s WHERE s.appid = :appid")
+    , @NamedQuery(name = "SearchDetails.findBySsoUserId", query = "SELECT s FROM SearchDetails s WHERE s.ssoUserId = :ssoUserId")
     , @NamedQuery(name = "SearchDetails.findByIp", query = "SELECT s FROM SearchDetails s WHERE s.ip = :ip")
     , @NamedQuery(name = "SearchDetails.findByLocation", query = "SELECT s FROM SearchDetails s WHERE s.location = :location")
     , @NamedQuery(name = "SearchDetails.findByDevice", query = "SELECT s FROM SearchDetails s WHERE s.device = :device")
@@ -43,11 +47,16 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "SearchDetails.findByLatitude", query = "SELECT s FROM SearchDetails s WHERE s.latitude = :latitude")
     , @NamedQuery(name = "SearchDetails.findByCreationDatetime", query = "SELECT s FROM SearchDetails s WHERE s.creationDatetime = :creationDatetime")
     , @NamedQuery(name = "SearchDetails.findByLastModifiedDatetime", query = "SELECT s FROM SearchDetails s WHERE s.lastModifiedDatetime = :lastModifiedDatetime")
-    , @NamedQuery(name = "SearchDetails.findByIsActive", query = "SELECT s FROM SearchDetails s WHERE s.isActive = :isActive")})
+    , @NamedQuery(name = "SearchDetails.findByIsActive", query = "SELECT s FROM SearchDetails s WHERE s.isActive = :isActive")
+    , @NamedQuery(name = "SearchDetails.findByUserEmailid", query = "SELECT s FROM SearchDetails s WHERE s.userEmailid = :userEmailid")
+    , @NamedQuery(name = "SearchDetails.findByReferer", query = "SELECT s FROM SearchDetails s WHERE s.referer = :referer")
+    , @NamedQuery(name = "SearchDetails.findByClientOS", query = "SELECT s FROM SearchDetails s WHERE s.clientOS = :clientOS")
+    , @NamedQuery(name = "SearchDetails.findByUserAgent", query = "SELECT s FROM SearchDetails s WHERE s.userAgent = :userAgent")})
 public class SearchDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
@@ -88,6 +97,16 @@ public class SearchDetails implements Serializable {
     @Basic(optional = false)
     @Column(name = "is_active")
     private boolean isActive;
+    @Column(name = "user_emailid")
+    private String userEmailid;
+    @Column(name = "referer")
+    private String referer;
+    @Column(name = "clientOS")
+    private String clientOS;
+    @Column(name = "user_agent")
+    private String userAgent;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "searchId")
+    private SearchDetailsChild searchDetailsChild;
 
     public SearchDetails() {
     }
@@ -126,15 +145,15 @@ public class SearchDetails implements Serializable {
         this.appid = appid;
     }
 
-	public String getSsoUserId() {
-		return ssoUserId;
-	}
+    public String getSsoUserId() {
+        return ssoUserId;
+    }
 
-	public void setSsoUserId(String ssoUserId) {
-		this.ssoUserId = ssoUserId;
-	}
+    public void setSsoUserId(String ssoUserId) {
+        this.ssoUserId = ssoUserId;
+    }
 
-	public String getIp() {
+    public String getIp() {
         return ip;
     }
 
@@ -236,6 +255,46 @@ public class SearchDetails implements Serializable {
 
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public String getUserEmailid() {
+        return userEmailid;
+    }
+
+    public void setUserEmailid(String userEmailid) {
+        this.userEmailid = userEmailid;
+    }
+
+    public String getReferer() {
+        return referer;
+    }
+
+    public void setReferer(String referer) {
+        this.referer = referer;
+    }
+
+    public String getClientOS() {
+        return clientOS;
+    }
+
+    public void setClientOS(String clientOS) {
+        this.clientOS = clientOS;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+    public SearchDetailsChild getSearchDetailsChild() {
+        return searchDetailsChild;
+    }
+
+    public void setSearchDetailsChild(SearchDetailsChild searchDetailsChild) {
+        this.searchDetailsChild = searchDetailsChild;
     }
 
     @Override

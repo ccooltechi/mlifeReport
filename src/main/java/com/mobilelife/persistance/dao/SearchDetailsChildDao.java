@@ -12,47 +12,37 @@ import org.slf4j.LoggerFactory;
 import com.mobilelife.dbutils.HibernateDAO;
 import com.mobilelife.dbutils.HibernateSessionManager;
 import com.mobilelife.persistance.entities.SearchDetails;
+import com.mobilelife.persistance.entities.SearchDetailsChild;
 
-public class SearchDetailsDao {
-	private static Logger logger = LoggerFactory.getLogger(SearchDetailsDao.class);
+public class SearchDetailsChildDao {
+	private static Logger logger = LoggerFactory.getLogger(SearchDetailsChildDao.class);
 	
 	
-	public SearchDetailsDao()
+	public SearchDetailsChildDao()
 	{
 		
 	}
 	
-	public List<SearchDetails> findAll()
+	public List<SearchDetailsChild> findAll()
 	{
 		Session session = HibernateSessionManager.getSession();
-		List<SearchDetails> userInfoList = null;
-		Query query = session.getNamedQuery("SearchDetails.findAll");
+		List<SearchDetailsChild> userInfoList = null;
+		Query query = session.getNamedQuery("SearchDetailsChild.findAll");
 		System.out.println("Size = "+query.list().size());
-		userInfoList = (List<SearchDetails>)query.list();
+		userInfoList = (List<SearchDetailsChild>)query.list();
 		return userInfoList;
 	}
 
-	public List<SearchDetails> findSearchInfoByID(String ssoUserId)
-	{
-		Session session = HibernateSessionManager.getSession();
-		List<SearchDetails> userInfoList = null;
-		Query query = session.getNamedQuery("SearchDetails.findBySsoUserId");
-		query.setParameter("ssoUserId", ssoUserId);
-		System.out.println("findSearchInfoByID = "+ssoUserId);
-		userInfoList = (List<SearchDetails>)query.list();
-		return userInfoList;
-	}
-	
 	public int findId()
 	{
 		Session session = HibernateSessionManager.getSession();
 		int rid = 0;
 		try {
-			List<SearchDetails> resultList = null;
+			List<SearchDetailsChild> resultList = null;
 
-			String query = "Select * from search_details order by id desc limit 2";
+			String query = "Select * from search_details_child order by id desc limit 2";
 			logger.debug("query in findID in  search_details " + query);
-			resultList = new HibernateDAO().findBySQLQuery(session, SearchDetails.class, query,"search_details");
+			resultList = new HibernateDAO().findBySQLQuery(session, SearchDetailsChild.class, query,"search_details_child");
 
 			logger.debug("findID  in  UserInfo Size = "+resultList.size());
 			if ((null!=resultList) && (resultList.size()>0))
@@ -70,19 +60,18 @@ public class SearchDetailsDao {
 		return rid;
 	}
 
-
-    public List<SearchDetails> searchByCatagory(String catagory, Date fromDt ,Date toDt)
+    public List<SearchDetailsChild> fetchReport(String catagory, Date fromDt ,Date toDt)
     {
         Session session = HibernateSessionManager.getSession();
-        List<SearchDetails> responseList = null;
+        List<SearchDetailsChild> responseList = null;
         try {
-            List<SearchDetails> resultList = null;
+            List<SearchDetailsChild> resultList = null;
 
-            String query = "Select * from search_details where searchRequest like '%\"category\":\""+catagory+"\"%' and creation_datetime between '"+fromDt+" 00:00:01' and '"+toDt+" 23:59:59'";
-            logger.debug("query in searchByCatagory in  search_details " + query);
-            resultList = new HibernateDAO().findBySQLQuery(session, SearchDetails.class, query,"search_details");
+            String query = "Select * from search_details_child where creation_datetime between '"+fromDt+" 00:00:01' and '"+toDt+" 23:59:59' order by creation_datetime";
+            logger.debug("query in fetchReport in  search_details " + query);
+            resultList = new HibernateDAO().findBySQLQuery(session, SearchDetailsChild.class, query,"search_details_child");
 
-            logger.debug("findID  in  UserInfo Size = "+resultList.size());
+            logger.debug("findID  in  fetchReport Size = "+resultList.size());
             if ((null!=resultList) && (resultList.size()>0))
             {
                 responseList = resultList;
@@ -98,7 +87,8 @@ public class SearchDetailsDao {
         return responseList;
     }
 
-	public void saveData(SearchDetails entityObj) {
+
+	public void saveData(SearchDetailsChild entityObj) {
 		Session session = HibernateSessionManager.getSession();
 		Transaction tx = null;
 		try {
@@ -112,11 +102,5 @@ public class SearchDetailsDao {
 			session.close();
 		}
 	}
-
-	
-	public static void main(String[] args) {
-		SearchDetailsDao searchPlan = new SearchDetailsDao();
-	}
-
 
 }
