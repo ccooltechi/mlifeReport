@@ -1,13 +1,18 @@
 package com.mlife.report.servlet;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,6 +20,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.mlife.report.pojo.Report;
 
@@ -32,9 +41,7 @@ public class SearchReport extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String dateFrom = request.getParameter("datepickerFrom");
@@ -51,40 +58,66 @@ public class SearchReport extends HttpServlet {
 	        Date daFrom = addHoursToJavaUtilDate(daFrom1,0,0);
 	        Date daTo1 = format.parse(dateTo);
 	        Date daTo = addHoursToJavaUtilDate(daTo1,23,59);
-	        Report rpt = new Report();
-//	        HashMap<String, List<SearchDetails>> responseHM = rpt.getSearchRequests(daFrom, daTo);
-//	        session.setAttribute("reponseHM", responseHM);
-//			rd = request.getRequestDispatcher("mobilereport.jsp"); // for now.
-//			rd.forward(request, response);
-	        String filename = daFrom+"-"+daTo+"-SearchedData.csv";
-	        String responseStr = rpt.getSearchRequestsDetails(daFrom, daTo);
-	        InputStream inStream = convertStringToInputStream(responseStr);
-	        response.setContentType("application/octet-stream");
-	        response.setContentLength((int) responseStr.length());
 	        
-	        String headerKey = "Content-Disposition";
-	        String headerValue = String.format("attachment; filename=\"%s\"", filename);
-	        response.setHeader(headerKey, headerValue);
-	         
-	        OutputStream outStream = response.getOutputStream();
-	        
-	        byte[] buffer = new byte[4096];
-	        int bytesRead = -1;
-	         
-	        while ((bytesRead = inStream.read(buffer)) != -1) {
-	            outStream.write(buffer, 0, bytesRead);
-	        }
-	         
-	        inStream.close();
-	        outStream.close(); 
+	        long difference = daTo.getTime() - daFrom.getTime();
+		    float daysBetween = (difference / (1000*60*60*24));
+		    System.out.println("daysBetween : "+daysBetween);
+		    if (daysBetween<=7)
+		    {
+		        Report rpt = new Report();
+		        String filename = daFrom+"-"+daTo+"-SearchedData.xlsx";
+		        HashMap responseHm = rpt.getSearchRequestsDetailsHM(daFrom, daTo);
+		        
+		        String responseStr1 = (String)responseHm.get("SHEET1");
+		        String responseStr2 = (String)responseHm.get("SHEET2");
+		        XSSFWorkbook workBook = new XSSFWorkbook();
+		        workBook = csvToSheet(responseStr1, workBook, "sheet1");
+		        workBook = csvToSheet(responseStr2, workBook, "sheet2");
+	
+		        response.setContentType("application/vnd.ms-excel");
+		        String headerKey = "Content-Disposition";
+		        String headerValue = String.format("attachment; filename=\"%s\"", filename);
+		        response.setHeader(headerKey, headerValue);
+		        workBook.write(response.getOutputStream()); // Write workbook to response.
+		        workBook.close();
+		    }
+		    else
+		    {
+		    	String message = "Report can be downloaded for only 7 days";
+		    	request.getSession().setAttribute("message", message);
+		    	response.sendRedirect("index.jsp");
+		    }
 	    } catch (ParseException ex) {
 	        //Logger.getLogger(ReserveServlet.class.getName()).log(Level.SEVERE, null, ex);
 	        System.out.println(ex);
 	    }		
 	    
-//		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
+
+	public XSSFWorkbook csvToSheet(String cvsString, XSSFWorkbook workBookx, String sheetName) {
+		XSSFWorkbook workBook = workBookx;
+        XSSFSheet sheet = workBook.createSheet(sheetName);
+	    try {
+	        String currentLine=null;
+	        int RowNum=0;
+	        Reader inputString = new StringReader(cvsString);
+	        BufferedReader br = new BufferedReader(inputString);
+	        while ((currentLine = br.readLine()) != null) {
+	            String str[] = currentLine.split(",");
+	            RowNum++;
+	            XSSFRow currentRow=sheet.createRow(RowNum);
+	            for(int i=0;i<str.length;i++){
+	                currentRow.createCell(i).setCellValue(str[i]);
+	            }
+	        }
+	        System.out.println("Done");
+	    } catch (Exception ex) {
+	        System.out.println(ex.getMessage()+"Exception in try");
+	    }
+        return workBook;
+	}
+	
 	public Date addHoursToJavaUtilDate(Date date, int hours, int mins) {
 	    Calendar calendar = Calendar.getInstance();
 	    calendar.setTime(date);

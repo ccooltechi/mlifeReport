@@ -2,67 +2,110 @@ package com.mlife.report.pojo;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mobilelife.api.beans.SearchRequest;
+import com.mobilelife.dbutils.HibernateSessionManager;
 import com.mobilelife.persistance.dao.SearchDetailsChildDao;
 import com.mobilelife.persistance.dao.SearchDetailsDao;
+import com.mobilelife.persistance.dao.SearchDetailsXtimesDao;
 import com.mobilelife.persistance.entities.SearchDetails;
 import com.mobilelife.persistance.entities.SearchDetailsChild;
+import com.mobilelife.persistance.entities.SearchDetailsXtimes;
 
 public class Report {
 
 	private static Logger logger = LoggerFactory.getLogger(Report.class);
 
-	public HashMap<String, List<SearchDetails>> getSearchRequests(Date daFrom, Date daTo)
+	public HashMap getSearchRequestsDetailsHM(Date daFrom, Date daTo)
 	{
-		HashMap<String, List<SearchDetails>> responseHM = new HashMap<String, List<SearchDetails>>();
-		SearchDetailsDao searchDetailsDao = new SearchDetailsDao();
-		List<SearchDetails> SearchDetails1 = (searchDetailsDao.searchByCatagory("1", new java.sql.Date(daFrom.getTime()), new java.sql.Date(daTo.getTime())));
-		List<SearchDetails> SearchDetails2 = (searchDetailsDao.searchByCatagory("2", new java.sql.Date(daFrom.getTime()), new java.sql.Date(daTo.getTime())));
-		List<SearchDetails> SearchDetails7 = (searchDetailsDao.searchByCatagory("7", new java.sql.Date(daFrom.getTime()), new java.sql.Date(daTo.getTime())));
-
-//		List<SearchRequest> searchRequestList1= mapSearchRequest(SearchDetails1);
-//		List<SearchRequest> searchRequestList2= mapSearchRequest(SearchDetails1);
-//		List<SearchRequest> searchRequestList7= mapSearchRequest(SearchDetails1);
-
-		List<SearchDetails> searchRequestList1= mapSearchRequest(SearchDetails1);
-		List<SearchDetails> searchRequestList2= mapSearchRequest(SearchDetails2);
-		List<SearchDetails> searchRequestList7= mapSearchRequest(SearchDetails7);
-		
-		responseHM.put("Postpaid", searchRequestList1);
-		responseHM.put("Prepaid", searchRequestList2);
-		responseHM.put("MobileSim", searchRequestList7);
-		return responseHM;
-	}
-
-	public String getSearchRequestsDetails(Date daFrom, Date daTo)
-	{
-		String responseStr = "";
+		HashMap<String, String> hm = new HashMap<String, String>();
+		String sheet1Str = "";
+		String sheet2Str = "";
 		SearchDetailsChildDao searchDetailsDao = new SearchDetailsChildDao();
-		List<SearchDetailsChild> SearchDetails1 = (searchDetailsDao.fetchReport("1", new java.sql.Date(daFrom.getTime()), new java.sql.Date(daTo.getTime())));
-		responseStr= makeCSV(SearchDetails1);
-		return responseStr;
+		List<SearchDetailsChild> searchDetails = (searchDetailsDao.fetchReport(new java.sql.Date(daFrom.getTime()), new java.sql.Date(daTo.getTime())));
+		sheet1Str= makeSheet1CSV(searchDetails);
+		sheet2Str= makeSheet2CSV(searchDetails);
+//		System.out.println("sheet2Str : "+sheet2Str);
+		hm.put("SHEET1", sheet1Str);
+		hm.put("SHEET2", sheet2Str);
+		return hm;
 	}
 
-	private String makeCSV(List<SearchDetailsChild> searchDetails1) {
+	private String makeSheet2CSV(List<SearchDetailsChild> searchDetailsChildList) {
+		StringBuffer retValue = new StringBuffer();
+		retValue.append("Sheet1 id ,");
+		retValue.append("Id ,");
+		retValue.append("plan_name ,");
+		retValue.append("Data ,");
+		retValue.append("Flexi ,");
+		retValue.append("National ,");
+		retValue.append("InterNational ,");
+		retValue.append("Budget ,");
+		retValue.append("\n");
+		SearchDetailsXtimesDao searchDetailsXtimesDao = new SearchDetailsXtimesDao();
+		Session session = HibernateSessionManager.getSession();
+		try {
+			for (int x=0; x<searchDetailsChildList.size();x++)
+			{
+				SearchDetailsChild searchDetailsChild = searchDetailsChildList.get(x); 
+				List<SearchDetailsXtimes>  searchDetailsXtimesList = searchDetailsXtimesDao.findBySearchChildId(searchDetailsChild.getId(), session);
+				if (null!=searchDetailsXtimesList)
+				{
+					for (int i=0; i<searchDetailsXtimesList.size();i++)
+					{
+						SearchDetailsXtimes searchDetailsXtimes = searchDetailsXtimesList.get(i);
+						retValue.append(searchDetailsXtimes.getSearchId().getId()+",");
+						retValue.append(searchDetailsXtimes.getId()+",");
+						retValue.append(searchDetailsXtimes.getPlanName()+",");
+						retValue.append(searchDetailsXtimes.getGeneData()+",");
+						retValue.append(searchDetailsXtimes.getGeneFlexi()+",");
+						retValue.append(searchDetailsXtimes.getGeneNational()+",");
+						retValue.append(searchDetailsXtimes.getGeneInterNational()+",");
+						retValue.append(searchDetailsXtimes.getGeneBudget()+",");
+						retValue.append("\n");
+					}
+				}
+			}
+		}catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		finally {
+			session.flush();
+			session.clear();
+			session.close();
+		}
+		return retValue.toString();
+	}
+
+	private String makeSheet1CSV(List<SearchDetailsChild> searchDetails1) {
 		StringBuffer retValue = new StringBuffer();
 		retValue.append("Token ,");
 		retValue.append("status ,");
 		retValue.append("Id ,");
 		retValue.append("SearchDate ,");
+		retValue.append("loggedInUser ,");
+		retValue.append("firstName ,");
+		retValue.append("lastName ,");
+		retValue.append("phone ,");
 		retValue.append("RequestType,");
 		retValue.append("Category ,");
 		retValue.append("Subcategory ,");
 		retValue.append("Moresaving ,");
+		retValue.append("SortBby ,");
 		retValue.append("AutoRenew ,");
 		retValue.append("Nationality ,");
 		retValue.append("MonthlyBudget ,");
@@ -81,6 +124,8 @@ public class Report {
 		retValue.append("Countries ,");
 		retValue.append("CallPlanType ,");
 		retValue.append("Operator ,");
+		retValue.append("Selected Plan ,");
+		retValue.append("Compaired Plans ,");
 		retValue.append("PlanReponse");
 		retValue.append("\n");
 
@@ -91,18 +136,32 @@ public class Report {
 			{
 				SearchDetailsChild searchDetailsChild = searchDetails1.get(i);
 				String checktokenX = searchDetailsChild.getToken();
-				retValue.append(searchDetailsChild.getToken()+",");
+				String loggedinuser = searchDetailsChild.getSearchId().getSsoUserId();
+				String fname = searchDetailsChild.getSearchId().getFirstName();
+				String lname = searchDetailsChild.getSearchId().getLastName();
+				String phone = searchDetailsChild.getSearchId().getMobileNo();
+				String operator = searchDetailsChild.getOperator();
+				String defaultStr = "";
+				operator = operator.replace(",", "|");
+				String planresponse = searchDetailsChild.getPlanReponse();
 				if (!checktoken.equalsIgnoreCase(checktokenX))
-					retValue.append("DEFAULT,");
-				else
-					retValue.append(",");
+					defaultStr = "DEFAULT";
+				
 				checktoken = checktokenX;
+
+				retValue.append(searchDetailsChild.getToken()+",");
+				retValue.append(defaultStr+",");
 				retValue.append(searchDetailsChild.getId()+",");
 				retValue.append(searchDetailsChild.getCreationDatetime()+",");
+				retValue.append(loggedinuser+",");
+				retValue.append(fname+",");
+				retValue.append(lname+",");
+				retValue.append(phone+",");
 				retValue.append(searchDetailsChild.getRequestType()+",");
 				retValue.append(searchDetailsChild.getCategory()+",");
 				retValue.append(searchDetailsChild.getSubcategory()+",");
 				retValue.append(searchDetailsChild.getMoresaving()+",");
+				retValue.append(searchDetailsChild.getSortBy()+",");
 				retValue.append(searchDetailsChild.getAutoRenew()+",");
 				retValue.append(searchDetailsChild.getNationality()+",");
 				retValue.append(searchDetailsChild.getMonthlyBudget()+",");
@@ -120,11 +179,9 @@ public class Report {
 				retValue.append(searchDetailsChild.getRechargeFrequency()+",");
 				retValue.append(searchDetailsChild.getCountries()+",");
 				retValue.append(searchDetailsChild.getCallPlanType()+",");
-				String operator = searchDetailsChild.getOperator();
-				operator = operator.replace(",", "|");
 				retValue.append(operator+",");
-				String planresponse = searchDetailsChild.getPlanReponse();
-//				planresponse = planresponse.replace(",", "|");
+				retValue.append(searchDetailsChild.getSelectedPlan()+",");
+				retValue.append(searchDetailsChild.getCompairedPlans()+",");
 				retValue.append(planresponse);
 				retValue.append("\n");
 
@@ -186,7 +243,20 @@ public class Report {
 
 	public static void main(String[] args) {
 		Report rpt = new Report();
-//		rpt.getSearchRequests();
+	    Calendar calendar1 = Calendar.getInstance();
+	    calendar1.add(Calendar.HOUR_OF_DAY, 0);
+	    calendar1.add(Calendar.MINUTE, 1);
+	    Calendar calendar2 = Calendar.getInstance();
+	    calendar2.add(Calendar.HOUR_OF_DAY, 23);
+	    calendar2.add(Calendar.MINUTE, 59);
+		
+        Date daFrom = calendar1.getTime();
+        Date daTo = calendar2.getTime(); 
+
+        System.out.println(daFrom+" -- "+calendar1.getTimeInMillis());
+        System.out.println(daTo+" -- "+calendar2.getTimeInMillis());
+        System.out.println(calendar2.getTimeInMillis() - calendar1.getTimeInMillis());
+//		rpt.getSearchRequestsDetailsHM(daFrom, daTo);
 	}
 
 }

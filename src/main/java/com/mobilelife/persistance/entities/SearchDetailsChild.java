@@ -1,8 +1,11 @@
 package com.mobilelife.persistance.entities;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
+
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,11 +14,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -121,6 +126,18 @@ public class SearchDetailsChild implements Serializable {
     private String token;
     @Column(name = "plan_reponse")
     private String planReponse;
+    
+    @Column(name = "selected_plan")
+    private String selectedPlan;
+
+    @Column(name = "sort_by")
+    private String sortBy;
+
+    @Column(name = "compairedPlans")
+    private String compairedPlans;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "searchId")
+    private Collection<SearchDetailsXtimes> searchDetailsXtimesCollection;
 
     public SearchDetailsChild() {
     }
@@ -367,11 +384,45 @@ public class SearchDetailsChild implements Serializable {
 		this.planReponse = planReponse;
 	}
 
+	
+	public String getSelectedPlan() {
+		return selectedPlan;
+	}
+
+	public void setSelectedPlan(String selectedPlan) {
+		this.selectedPlan = selectedPlan;
+	}
+
+	public String getSortBy() {
+		return sortBy;
+	}
+
+	public void setSortBy(String sortBy) {
+		this.sortBy = sortBy;
+	}
+	
+	public String getCompairedPlans() {
+		return compairedPlans;
+	}
+
+	public void setCompairedPlans(String compairedPlans) {
+		this.compairedPlans = compairedPlans;
+	}
+
 	@Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
         return hash;
+    }
+
+    @XmlTransient
+    public Collection<SearchDetailsXtimes> getSearchDetailsXtimesCollection() {
+        return searchDetailsXtimesCollection;
+    }
+
+    public void setSearchDetailsXtimesCollection(Collection<SearchDetailsXtimes> searchDetailsXtimesCollection) {
+        this.searchDetailsXtimesCollection = searchDetailsXtimesCollection;
     }
 
     @Override

@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "search_details")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "SearchDetails.findAll", query = "SELECT s FROM SearchDetails s")
+    @NamedQuery(name = "SearchDetails.findAll", query = "SELECT s FROM SearchDetails s where s.isActive=0 ")
     , @NamedQuery(name = "SearchDetails.findById", query = "SELECT s FROM SearchDetails s WHERE s.id = :id")
     , @NamedQuery(name = "SearchDetails.findByTokenid", query = "SELECT s FROM SearchDetails s WHERE s.tokenid = :tokenid")
     , @NamedQuery(name = "SearchDetails.findByAppid", query = "SELECT s FROM SearchDetails s WHERE s.appid = :appid")
@@ -87,6 +87,9 @@ public class SearchDetails implements Serializable {
     @Lob
     @Column(name = "searchRequest")
     private String searchRequest;
+    @Lob
+    @Column(name = "searchResponse")
+    private String searchResponse;
     @Basic(optional = false)
     @Column(name = "creation_datetime")
     @Temporal(TemporalType.TIMESTAMP)
@@ -105,6 +108,11 @@ public class SearchDetails implements Serializable {
     private String clientOS;
     @Column(name = "user_agent")
     private String userAgent;
+    @Column(name = "first_name")
+    private String firstName;
+    @Column(name = "last_name")
+    private String lastName;
+    
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "searchId")
     private SearchDetailsChild searchDetailsChild;
 
@@ -229,7 +237,15 @@ public class SearchDetails implements Serializable {
         return searchRequest;
     }
 
-    public void setSearchRequest(String searchRequest) {
+    public String getSearchResponse() {
+		return searchResponse;
+	}
+
+	public void setSearchResponse(String searchResponse) {
+		this.searchResponse = searchResponse;
+	}
+
+	public void setSearchRequest(String searchRequest) {
         this.searchRequest = searchRequest;
     }
 
@@ -289,7 +305,27 @@ public class SearchDetails implements Serializable {
         this.userAgent = userAgent;
     }
 
-    public SearchDetailsChild getSearchDetailsChild() {
+    public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public SearchDetailsChild getSearchDetailsChild() {
         return searchDetailsChild;
     }
 

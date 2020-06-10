@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import com.mobilelife.dbutils.HibernateDAO;
 import com.mobilelife.dbutils.HibernateSessionManager;
-import com.mobilelife.persistance.entities.SearchDetails;
 import com.mobilelife.persistance.entities.SearchDetailsChild;
 
 public class SearchDetailsChildDao {
@@ -28,7 +27,7 @@ public class SearchDetailsChildDao {
 		Session session = HibernateSessionManager.getSession();
 		List<SearchDetailsChild> userInfoList = null;
 		Query query = session.getNamedQuery("SearchDetailsChild.findAll");
-		System.out.println("Size = "+query.list().size());
+		//logger.debug("Size = "+query.list().size());
 		userInfoList = (List<SearchDetailsChild>)query.list();
 		return userInfoList;
 	}
@@ -41,10 +40,10 @@ public class SearchDetailsChildDao {
 			List<SearchDetailsChild> resultList = null;
 
 			String query = "Select * from search_details_child order by id desc limit 2";
-			logger.debug("query in findID in  search_details " + query);
+			//logger.debug("query in findID in  search_details " + query);
 			resultList = new HibernateDAO().findBySQLQuery(session, SearchDetailsChild.class, query,"search_details_child");
 
-			logger.debug("findID  in  UserInfo Size = "+resultList.size());
+			//logger.debug("findID  in  UserInfo Size = "+resultList.size());
 			if ((null!=resultList) && (resultList.size()>0))
 			{
 				rid = resultList.get(0).getId();
@@ -60,33 +59,6 @@ public class SearchDetailsChildDao {
 		return rid;
 	}
 
-    public List<SearchDetailsChild> fetchReport(String catagory, Date fromDt ,Date toDt)
-    {
-        Session session = HibernateSessionManager.getSession();
-        List<SearchDetailsChild> responseList = null;
-        try {
-            List<SearchDetailsChild> resultList = null;
-
-            String query = "Select * from search_details_child where creation_datetime between '"+fromDt+" 00:00:01' and '"+toDt+" 23:59:59' order by creation_datetime";
-            logger.debug("query in fetchReport in  search_details " + query);
-            resultList = new HibernateDAO().findBySQLQuery(session, SearchDetailsChild.class, query,"search_details_child");
-
-            logger.debug("findID  in  fetchReport Size = "+resultList.size());
-            if ((null!=resultList) && (resultList.size()>0))
-            {
-                responseList = resultList;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            session.flush();
-            session.clear();
-            session.close();
-            // HibernateSessionManager.closeSession()();
-        }
-        return responseList;
-    }
-
 
 	public void saveData(SearchDetailsChild entityObj) {
 		Session session = HibernateSessionManager.getSession();
@@ -101,6 +73,31 @@ public class SearchDetailsChildDao {
 		} finally {
 			session.close();
 		}
+	}
+
+	public List<SearchDetailsChild> fetchReport(Date fromDate, Date toDate) {
+		Session session = HibernateSessionManager.getSession();
+		List<SearchDetailsChild> retVal = null;
+		try {
+			List<SearchDetailsChild> resultList = null;
+
+	        String query = "Select * from search_details_child where creation_datetime between '"+fromDate+" 00:00:01' and '"+toDate+" 23:59:59' order by creation_datetime";
+			logger.debug("query in findID in  search_details " + query);
+			resultList = new HibernateDAO().findBySQLQuery(session, SearchDetailsChild.class, query,"search_details_child");
+
+			//logger.debug("findID  in  UserInfo Size = "+resultList.size());
+			if ((null!=resultList) && (resultList.size()>0))
+			{
+				retVal = resultList;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			session.flush();
+			session.clear();
+			session.close();
+		}
+		return retVal;
 	}
 
 }
