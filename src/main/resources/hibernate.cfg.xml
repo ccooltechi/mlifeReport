@@ -6,8 +6,11 @@
 	<session-factory>
 
 
-		<!-- FOR WILDFLY JNDI USE   -->
+		<!-- FOR WILDFLY JNDI USE
 			
+		    <property name="connection.datasource">java:jboss/datasources/reporting</property>
+		    
+		     -->
 		    <property name="connection.datasource">java:jboss/datasources/telcoMis</property>
 		    <property name="show_sql">true</property>
 		    <property name="dialect">org.hibernate.dialect.MySQLDialect</property>

@@ -8,6 +8,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -136,7 +137,18 @@ public class SearchDetailsChild implements Serializable {
     @Column(name = "compairedPlans")
     private String compairedPlans;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "searchId")
+    @Column(name = "callback_plan")
+    private String callbackPlan;
+
+    @Column(name = "actionKey")
+    private String actionKey;
+    
+    @Column(name = "actionValue")
+    private String actionValue;
+
+    
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "searchId")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "searchId", cascade = CascadeType.ALL)
     private Collection<SearchDetailsXtimes> searchDetailsXtimesCollection;
 
     public SearchDetailsChild() {
@@ -408,39 +420,271 @@ public class SearchDetailsChild implements Serializable {
 	public void setCompairedPlans(String compairedPlans) {
 		this.compairedPlans = compairedPlans;
 	}
+	
+	public String getCallbackPlan() {
+		return callbackPlan;
+	}
+
+	public void setCallbackPlan(String callbackPlan) {
+		this.callbackPlan = callbackPlan;
+	}
+	
+	public String getActionKey() {
+		return actionKey;
+	}
+
+	public void setActionKey(String actionKey) {
+		this.actionKey = actionKey;
+	}
+
+	public String getActionValue() {
+		return actionValue;
+	}
+
+	public void setActionValue(String actionValue) {
+		this.actionValue = actionValue;
+	}
+
+	public Collection<SearchDetailsXtimes> getSearchDetailsXtimesCollection() {
+		return searchDetailsXtimesCollection;
+	}
+
+	public void setSearchDetailsXtimesCollection(Collection<SearchDetailsXtimes> searchDetailsXtimesCollection) {
+		this.searchDetailsXtimesCollection = searchDetailsXtimesCollection;
+	}
 
 	@Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((actionKey == null) ? 0 : actionKey.hashCode());
+		result = prime * result + ((actionValue == null) ? 0 : actionValue.hashCode());
+		result = prime * result + ((autoRenew == null) ? 0 : autoRenew.hashCode());
+		result = prime * result + ((callPlanType == null) ? 0 : callPlanType.hashCode());
+		result = prime * result + ((callbackPlan == null) ? 0 : callbackPlan.hashCode());
+		result = prime * result + ((category == null) ? 0 : category.hashCode());
+		result = prime * result + ((compairedPlans == null) ? 0 : compairedPlans.hashCode());
+		result = prime * result + ((countries == null) ? 0 : countries.hashCode());
+		result = prime * result + ((creationDatetime == null) ? 0 : creationDatetime.hashCode());
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((dataOnly == null) ? 0 : dataOnly.hashCode());
+		result = prime * result + ((deviceBrand == null) ? 0 : deviceBrand.hashCode());
+		result = prime * result + ((deviceColor == null) ? 0 : deviceColor.hashCode());
+		result = prime * result + ((deviceMemory == null) ? 0 : deviceMemory.hashCode());
+		result = prime * result + ((deviceModels == null) ? 0 : deviceModels.hashCode());
+		result = prime * result + ((flexi == null) ? 0 : flexi.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((international == null) ? 0 : international.hashCode());
+		result = prime * result + (isActive ? 1231 : 1237);
+		result = prime * result + ((lastModifiedDatetime == null) ? 0 : lastModifiedDatetime.hashCode());
+		result = prime * result + ((monthlyBudget == null) ? 0 : monthlyBudget.hashCode());
+		result = prime * result + ((moresaving == null) ? 0 : moresaving.hashCode());
+		result = prime * result + ((national == null) ? 0 : national.hashCode());
+		result = prime * result + ((nationality == null) ? 0 : nationality.hashCode());
+		result = prime * result + ((operator == null) ? 0 : operator.hashCode());
+		result = prime * result + ((planReponse == null) ? 0 : planReponse.hashCode());
+		result = prime * result + ((prepaidInline == null) ? 0 : prepaidInline.hashCode());
+		result = prime * result + ((prepaidTypeFilter == null) ? 0 : prepaidTypeFilter.hashCode());
+		result = prime * result + ((rechargeFrequency == null) ? 0 : rechargeFrequency.hashCode());
+		result = prime * result + ((requestType == null) ? 0 : requestType.hashCode());
+		result = prime * result
+				+ ((searchDetailsXtimesCollection == null) ? 0 : searchDetailsXtimesCollection.hashCode());
+		result = prime * result + ((searchId == null) ? 0 : searchId.hashCode());
+		result = prime * result + ((selectedPlan == null) ? 0 : selectedPlan.hashCode());
+		result = prime * result + ((sortBy == null) ? 0 : sortBy.hashCode());
+		result = prime * result + ((subcategory == null) ? 0 : subcategory.hashCode());
+		result = prime * result + ((token == null) ? 0 : token.hashCode());
+		return result;
+	}
 
-    @XmlTransient
-    public Collection<SearchDetailsXtimes> getSearchDetailsXtimesCollection() {
-        return searchDetailsXtimesCollection;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SearchDetailsChild other = (SearchDetailsChild) obj;
+		if (actionKey == null) {
+			if (other.actionKey != null)
+				return false;
+		} else if (!actionKey.equals(other.actionKey))
+			return false;
+		if (actionValue == null) {
+			if (other.actionValue != null)
+				return false;
+		} else if (!actionValue.equals(other.actionValue))
+			return false;
+		if (autoRenew == null) {
+			if (other.autoRenew != null)
+				return false;
+		} else if (!autoRenew.equals(other.autoRenew))
+			return false;
+		if (callPlanType == null) {
+			if (other.callPlanType != null)
+				return false;
+		} else if (!callPlanType.equals(other.callPlanType))
+			return false;
+		if (callbackPlan == null) {
+			if (other.callbackPlan != null)
+				return false;
+		} else if (!callbackPlan.equals(other.callbackPlan))
+			return false;
+		if (category == null) {
+			if (other.category != null)
+				return false;
+		} else if (!category.equals(other.category))
+			return false;
+		if (compairedPlans == null) {
+			if (other.compairedPlans != null)
+				return false;
+		} else if (!compairedPlans.equals(other.compairedPlans))
+			return false;
+		if (countries == null) {
+			if (other.countries != null)
+				return false;
+		} else if (!countries.equals(other.countries))
+			return false;
+		if (creationDatetime == null) {
+			if (other.creationDatetime != null)
+				return false;
+		} else if (!creationDatetime.equals(other.creationDatetime))
+			return false;
+		if (data == null) {
+			if (other.data != null)
+				return false;
+		} else if (!data.equals(other.data))
+			return false;
+		if (dataOnly == null) {
+			if (other.dataOnly != null)
+				return false;
+		} else if (!dataOnly.equals(other.dataOnly))
+			return false;
+		if (deviceBrand == null) {
+			if (other.deviceBrand != null)
+				return false;
+		} else if (!deviceBrand.equals(other.deviceBrand))
+			return false;
+		if (deviceColor == null) {
+			if (other.deviceColor != null)
+				return false;
+		} else if (!deviceColor.equals(other.deviceColor))
+			return false;
+		if (deviceMemory == null) {
+			if (other.deviceMemory != null)
+				return false;
+		} else if (!deviceMemory.equals(other.deviceMemory))
+			return false;
+		if (deviceModels == null) {
+			if (other.deviceModels != null)
+				return false;
+		} else if (!deviceModels.equals(other.deviceModels))
+			return false;
+		if (flexi == null) {
+			if (other.flexi != null)
+				return false;
+		} else if (!flexi.equals(other.flexi))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (international == null) {
+			if (other.international != null)
+				return false;
+		} else if (!international.equals(other.international))
+			return false;
+		if (isActive != other.isActive)
+			return false;
+		if (lastModifiedDatetime == null) {
+			if (other.lastModifiedDatetime != null)
+				return false;
+		} else if (!lastModifiedDatetime.equals(other.lastModifiedDatetime))
+			return false;
+		if (monthlyBudget == null) {
+			if (other.monthlyBudget != null)
+				return false;
+		} else if (!monthlyBudget.equals(other.monthlyBudget))
+			return false;
+		if (moresaving == null) {
+			if (other.moresaving != null)
+				return false;
+		} else if (!moresaving.equals(other.moresaving))
+			return false;
+		if (national == null) {
+			if (other.national != null)
+				return false;
+		} else if (!national.equals(other.national))
+			return false;
+		if (nationality == null) {
+			if (other.nationality != null)
+				return false;
+		} else if (!nationality.equals(other.nationality))
+			return false;
+		if (operator == null) {
+			if (other.operator != null)
+				return false;
+		} else if (!operator.equals(other.operator))
+			return false;
+		if (planReponse == null) {
+			if (other.planReponse != null)
+				return false;
+		} else if (!planReponse.equals(other.planReponse))
+			return false;
+		if (prepaidInline == null) {
+			if (other.prepaidInline != null)
+				return false;
+		} else if (!prepaidInline.equals(other.prepaidInline))
+			return false;
+		if (prepaidTypeFilter == null) {
+			if (other.prepaidTypeFilter != null)
+				return false;
+		} else if (!prepaidTypeFilter.equals(other.prepaidTypeFilter))
+			return false;
+		if (rechargeFrequency == null) {
+			if (other.rechargeFrequency != null)
+				return false;
+		} else if (!rechargeFrequency.equals(other.rechargeFrequency))
+			return false;
+		if (requestType == null) {
+			if (other.requestType != null)
+				return false;
+		} else if (!requestType.equals(other.requestType))
+			return false;
+		if (searchDetailsXtimesCollection == null) {
+			if (other.searchDetailsXtimesCollection != null)
+				return false;
+		} else if (!searchDetailsXtimesCollection.equals(other.searchDetailsXtimesCollection))
+			return false;
+		if (searchId == null) {
+			if (other.searchId != null)
+				return false;
+		} else if (!searchId.equals(other.searchId))
+			return false;
+		if (selectedPlan == null) {
+			if (other.selectedPlan != null)
+				return false;
+		} else if (!selectedPlan.equals(other.selectedPlan))
+			return false;
+		if (sortBy == null) {
+			if (other.sortBy != null)
+				return false;
+		} else if (!sortBy.equals(other.sortBy))
+			return false;
+		if (subcategory == null) {
+			if (other.subcategory != null)
+				return false;
+		} else if (!subcategory.equals(other.subcategory))
+			return false;
+		if (token == null) {
+			if (other.token != null)
+				return false;
+		} else if (!token.equals(other.token))
+			return false;
+		return true;
+	}
 
-    public void setSearchDetailsXtimesCollection(Collection<SearchDetailsXtimes> searchDetailsXtimesCollection) {
-        this.searchDetailsXtimesCollection = searchDetailsXtimesCollection;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof SearchDetailsChild)) {
-            return false;
-        }
-        SearchDetailsChild other = (SearchDetailsChild) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "com.mobilelife.persistance.entities.SearchDetailsChild[ id=" + id + " ]";
-    }
     
 }

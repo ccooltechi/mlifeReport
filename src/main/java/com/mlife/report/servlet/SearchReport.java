@@ -62,7 +62,7 @@ public class SearchReport extends HttpServlet {
 	        long difference = daTo.getTime() - daFrom.getTime();
 		    float daysBetween = (difference / (1000*60*60*24));
 		    System.out.println("daysBetween : "+daysBetween);
-		    if (daysBetween<=7)
+//		    if (daysBetween<=2)
 		    {
 		        Report rpt = new Report();
 		        String filename = daFrom+"-"+daTo+"-SearchedData.xlsx";
@@ -81,12 +81,12 @@ public class SearchReport extends HttpServlet {
 		        workBook.write(response.getOutputStream()); // Write workbook to response.
 		        workBook.close();
 		    }
-		    else
-		    {
-		    	String message = "Report can be downloaded for only 7 days";
-		    	request.getSession().setAttribute("message", message);
-		    	response.sendRedirect("index.jsp");
-		    }
+//		    else
+//		    {
+//		    	String message = "Report can be downloaded for only 7 days";
+//		    	request.getSession().setAttribute("message", message);
+//		    	response.sendRedirect("index.jsp");
+//		    }
 	    } catch (ParseException ex) {
 	        //Logger.getLogger(ReserveServlet.class.getName()).log(Level.SEVERE, null, ex);
 	        System.out.println(ex);

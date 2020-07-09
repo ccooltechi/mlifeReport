@@ -3,6 +3,7 @@ package com.mlife.report.pojo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,26 +57,32 @@ public class Report {
 		retValue.append("Budget ,");
 		retValue.append("\n");
 		SearchDetailsXtimesDao searchDetailsXtimesDao = new SearchDetailsXtimesDao();
-		Session session = HibernateSessionManager.getSession();
+//		Session session = HibernateSessionManager.getSession();
 		try {
-			for (int x=0; x<searchDetailsChildList.size();x++)
+			if(null!=searchDetailsChildList)
 			{
-				SearchDetailsChild searchDetailsChild = searchDetailsChildList.get(x); 
-				List<SearchDetailsXtimes>  searchDetailsXtimesList = searchDetailsXtimesDao.findBySearchChildId(searchDetailsChild.getId(), session);
-				if (null!=searchDetailsXtimesList)
+				for (int x=0; x<searchDetailsChildList.size();x++)
 				{
-					for (int i=0; i<searchDetailsXtimesList.size();i++)
+					SearchDetailsChild searchDetailsChild = searchDetailsChildList.get(x); 
+					Collection<SearchDetailsXtimes> collection =  searchDetailsChild.getSearchDetailsXtimesCollection();
+					
+	//				List<SearchDetailsXtimes>  searchDetailsXtimesList = searchDetailsXtimesDao.findBySearchChildId(searchDetailsChild.getId(), session);
+					if (null!=collection)
 					{
-						SearchDetailsXtimes searchDetailsXtimes = searchDetailsXtimesList.get(i);
-						retValue.append(searchDetailsXtimes.getSearchId().getId()+",");
-						retValue.append(searchDetailsXtimes.getId()+",");
-						retValue.append(searchDetailsXtimes.getPlanName()+",");
-						retValue.append(searchDetailsXtimes.getGeneData()+",");
-						retValue.append(searchDetailsXtimes.getGeneFlexi()+",");
-						retValue.append(searchDetailsXtimes.getGeneNational()+",");
-						retValue.append(searchDetailsXtimes.getGeneInterNational()+",");
-						retValue.append(searchDetailsXtimes.getGeneBudget()+",");
-						retValue.append("\n");
+	//					for (int i=0; i<collection.size();i++)
+						for(SearchDetailsXtimes searchDetailsXtimes : collection) 
+						{
+	//						SearchDetailsXtimes searchDetailsXtimes = searchDetailsXtimesList.get(i);
+							retValue.append(searchDetailsXtimes.getSearchId().getId()+",");
+							retValue.append(searchDetailsXtimes.getId()+",");
+							retValue.append(searchDetailsXtimes.getPlanName()+",");
+							retValue.append(searchDetailsXtimes.getGeneData()+",");
+							retValue.append(searchDetailsXtimes.getGeneFlexi()+",");
+							retValue.append(searchDetailsXtimes.getGeneNational()+",");
+							retValue.append(searchDetailsXtimes.getGeneInterNational()+",");
+							retValue.append(searchDetailsXtimes.getGeneBudget()+",");
+							retValue.append("\n");
+						}
 					}
 				}
 			}
@@ -84,9 +91,9 @@ public class Report {
 			ex.printStackTrace();
 		}
 		finally {
-			session.flush();
-			session.clear();
-			session.close();
+//			session.flush();
+//			session.clear();
+//			session.close();
 		}
 		return retValue.toString();
 	}
@@ -97,6 +104,7 @@ public class Report {
 		retValue.append("status ,");
 		retValue.append("Id ,");
 		retValue.append("SearchDate ,");
+		retValue.append("clientIP ,");
 		retValue.append("loggedInUser ,");
 		retValue.append("firstName ,");
 		retValue.append("lastName ,");
@@ -124,8 +132,11 @@ public class Report {
 		retValue.append("Countries ,");
 		retValue.append("CallPlanType ,");
 		retValue.append("Operator ,");
+		retValue.append("action ,");
+		retValue.append("result ,");
 		retValue.append("Selected Plan ,");
 		retValue.append("Compaired Plans ,");
+		retValue.append("callback ,");
 		retValue.append("PlanReponse");
 		retValue.append("\n");
 
@@ -137,9 +148,15 @@ public class Report {
 				SearchDetailsChild searchDetailsChild = searchDetails1.get(i);
 				String checktokenX = searchDetailsChild.getToken();
 				String loggedinuser = searchDetailsChild.getSearchId().getSsoUserId();
+				if ((null!=loggedinuser) && (loggedinuser.equalsIgnoreCase("NA")))
+					loggedinuser = searchDetailsChild.getSearchId().getUserEmailid();
+		
 				String fname = searchDetailsChild.getSearchId().getFirstName();
 				String lname = searchDetailsChild.getSearchId().getLastName();
 				String phone = searchDetailsChild.getSearchId().getMobileNo();
+				String action = searchDetailsChild.getActionKey();
+				String actionvalue = searchDetailsChild.getActionValue();
+				String callback = searchDetailsChild.getCallbackPlan();
 				String operator = searchDetailsChild.getOperator();
 				String defaultStr = "";
 				operator = operator.replace(",", "|");
@@ -153,6 +170,7 @@ public class Report {
 				retValue.append(defaultStr+",");
 				retValue.append(searchDetailsChild.getId()+",");
 				retValue.append(searchDetailsChild.getCreationDatetime()+",");
+				retValue.append(searchDetailsChild.getSearchId().getIp()+",");
 				retValue.append(loggedinuser+",");
 				retValue.append(fname+",");
 				retValue.append(lname+",");
@@ -180,8 +198,11 @@ public class Report {
 				retValue.append(searchDetailsChild.getCountries()+",");
 				retValue.append(searchDetailsChild.getCallPlanType()+",");
 				retValue.append(operator+",");
+				retValue.append(action+",");
+				retValue.append(actionvalue+",");
 				retValue.append(searchDetailsChild.getSelectedPlan()+",");
 				retValue.append(searchDetailsChild.getCompairedPlans()+",");
+				retValue.append(callback+",");
 				retValue.append(planresponse);
 				retValue.append("\n");
 
