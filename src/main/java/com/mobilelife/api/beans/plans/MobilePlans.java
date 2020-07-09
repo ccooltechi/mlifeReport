@@ -74,6 +74,10 @@ public class MobilePlans{
 	private String autorenew;
 	
     @XmlAttribute
+    private boolean supportRetail= false;
+    @XmlAttribute
+    private boolean supportOnline= false;
+    @XmlAttribute
     private boolean isDiscountedUpfrontPayment= false;
 
     @XmlElement
@@ -871,6 +875,18 @@ public class MobilePlans{
 	}
 	public void setAddOnStatus(String addOnStatus) {
 		this.addOnStatus = addOnStatus;
+	}
+	public boolean isSupportRetail() {
+		return supportRetail;
+	}
+	public void setSupportRetail(boolean supportRetail) {
+		this.supportRetail = supportRetail;
+	}
+	public boolean isSupportOnline() {
+		return supportOnline;
+	}
+	public void setSupportOnline(boolean supportOnline) {
+		this.supportOnline = supportOnline;
 	}
 	
 }

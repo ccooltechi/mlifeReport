@@ -311,7 +311,8 @@ input[type=submit]:hover {
 										<div class="col-xs-4">
 											<div class="form-group">
 												<label class="form-check-label">To Date</label><input type="text" class="form-control" name="datepickerTo" id="datepickerTo" placeholder="Date" required=""/>
-												<input type="submit" value="search" />  
+												<input type="submit" name="search" value="Search">
+												<input type="submit" name="download" value="Download">												  
 											</form>
 										</div>
 										<div class="col-xs-4">
