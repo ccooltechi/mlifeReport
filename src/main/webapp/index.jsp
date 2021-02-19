@@ -298,40 +298,19 @@ input[type=submit]:hover {
 		<div class="am-pagebody">
 			<div class="product-solutions-page-flexslider flexslider" style="min-height: 220px; background: #F4F8F9;">
 				<div class="container">
-						<div style="width:50%;margin: 0 auto; ">
+					<div style="width:50%;margin: 0 auto; ">
+						<div class="row">
+				        <div class="col-xs-12">
 							<div class="row">
-					        <div class="col-xs-12">
-								<div class="row">
-									<form action="SearchReport">
-										<div class="col-xs-4">
-											<div class="form-group">
-												<label class="form-check-label">From Date</label><input type="text" class="form-control" name="datepickerFrom" id="datepickerFrom" placeholder="Date" required=""/>
-											</div>
-										</div>
-										<div class="col-xs-4">
-											<div class="form-group">
-												<label class="form-check-label">To Date</label><input type="text" class="form-control" name="datepickerTo" id="datepickerTo" placeholder="Date" required=""/>
-												<input type="submit" name="search" value="Search">
-												<input type="submit" name="download" value="Download">												  
-											</form>
-										</div>
-										<div class="col-xs-4">
-											<div class="form-group">
-												<% String message = "";
-												if (null!=session.getAttribute("message"))
-												{ message = (String)session.getAttribute("message");
-												%>
-													<p style="font-size:14px; color: red;"><%=message %></p>
-												<%
-													session.setAttribute("message", null);
-												}
-												%>
-											</form>
-										</div>
-									</div>
+								<form action="loginprocess.jsp">
+									Email:<input type="text" name="email"/><br/><br/>
+									Password:<input type="password" name="pass"/><br/><br/>
+									<input type="submit" value="login"/>
+								</form>								
 								</div>
-						    </div>
-				    	</div>
+							</div>
+					    </div>
+			    	</div>
 				</div>
 			</div>
 		</div>
@@ -339,57 +318,4 @@ input[type=submit]:hover {
 </body>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script>
-    $(function () {
-        $("#datepickerFrom").datepicker();
-        $("#datepickerTo").datepicker();
-    });
-
-/*     $(document).ready(function(){
-        $( "#datepickerFrom" ).datepicker({
-            onClose: function() {
-                var date2 = $('#datepickerFrom').datepicker('getDate');
-                date2.setDate(date2.getDate()+1)
-                $( "#datepickerTo" ).datepicker("setDate", date2);
-            }
-        });
-        $( "#datepickerTo" ).datepicker();
-    });    
- */
-
-/*  $(document).ready(function () {
-	    $("#datepickerFrom").datepicker({
-	        dateFormat: "dd-M-yy",
-	        minDate: 0,
-	        onSelect: function () {
-	            var dt2 = $('#datepickerTo');
-	            var startDate = $(this).datepicker('getDate');
-	            //add 30 days to selected date
-	            startDate.setDate(startDate.getDate() + 7);
-	            var minDate = $(this).datepicker('getDate');
-	            var dt2Date = dt2.datepicker('getDate');
-	            //difference in days. 86400 seconds in day, 1000 ms in second
-	            var dateDiff = (dt2Date - minDate)/(86400 * 1000);
-
-	            //dt2 not set or dt1 date is greater than dt2 date
-	            if (dt2Date == null || dateDiff < 0) {
-	                    dt2.datepicker('setDate', minDate);
-	            }
-	            //dt1 date is 30 days under dt2 date
-	            else if (dateDiff > 7){
-	                    dt2.datepicker('setDate', startDate);
-	            }
-	            //sets dt2 maxDate to the last day of 30 days window
-	            dt2.datepicker('option', 'maxDate', startDate);
-	            //first day which can be selected in dt2 is selected date in dt1
-	            dt2.datepicker('option', 'minDate', minDate);
-	        }
-	    });
-	    $('#datepickerTo').datepicker({
-	        dateFormat: "dd-M-yy",
-	        minDate: 0
-	    });
-	});
- */ </script>
-
 </html>

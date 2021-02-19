@@ -43,6 +43,7 @@
 		    <mapping class="com.mobilelife.persistance.entities.SearchDetails" />
 		    <mapping class="com.mobilelife.persistance.entities.SearchDetailsChild" />
 		    <mapping class="com.mobilelife.persistance.entities.SearchDetailsXtimes" />
+		    <mapping class="com.mobilelife.persistance.entities.UserAccess" />
 					          
 	</session-factory>
 </hibernate-configuration>
