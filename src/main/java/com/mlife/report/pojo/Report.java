@@ -7,6 +7,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,6 +92,7 @@ public class Report {
 	}
 
 	private String makeSheet1CSV(List<SearchDetailsChild> searchDetails1) {
+		HashMap<String, String> tokenhm = new HashMap<String, String>();
 		StringBuffer retValue = new StringBuffer();
 		retValue.append("Token ,");
 		retValue.append("status ,");
@@ -136,7 +140,6 @@ public class Report {
 			for (int i=0;i<searchDetails1.size();i++)
 			{
 				SearchDetailsChild searchDetailsChild = searchDetails1.get(i);
-				String checktokenX = searchDetailsChild.getToken();
 				String loggedinuser = searchDetailsChild.getSearchId().getSsoUserId();
 				if ((null!=loggedinuser) && (loggedinuser.equalsIgnoreCase("NA")))
 					loggedinuser = searchDetailsChild.getSearchId().getUserEmailid();
@@ -148,14 +151,22 @@ public class Report {
 				String actionvalue = searchDetailsChild.getActionValue();
 				String callback = searchDetailsChild.getCallbackPlan();
 				String operator = searchDetailsChild.getOperator();
-				String defaultStr = "";
 				operator = operator.replace(",", "|");
 				String planresponse = searchDetailsChild.getPlanReponse();
-				if (!checktoken.equalsIgnoreCase(checktokenX))
-					defaultStr = "DEFAULT";
+				String planjsonResp = searchDetailsChild.getSearchId().getSearchRequest();
 				
-				checktoken = checktokenX;
-
+                String defaultStr = "";
+				String checktokenX = searchDetailsChild.getToken()+"-"+searchDetailsChild.getRequestType();
+				if (tokenhm.containsKey(checktokenX))
+                	defaultStr = "";
+				else
+				{
+                	defaultStr = "NEW_REQUEST";
+					tokenhm.put(checktokenX, "DONE");
+				}
+//                if (null!=action)
+//                	defaultStr = "USER-ACTION";
+                
 				retValue.append(searchDetailsChild.getToken()+",");
 				retValue.append(defaultStr+",");
 				retValue.append(searchDetailsChild.getId()+",");
@@ -201,6 +212,22 @@ public class Report {
 		return retValue.toString();
 	}
 
+	private String getfilterTypeStr(String planjsonResp) {
+		JSONParser parser = new JSONParser();
+		String defaultStr ="";
+		try {
+			JSONObject json = (JSONObject) parser.parse(planjsonResp);
+			json = (JSONObject) json.get("search_criteria");
+			json = (JSONObject) json.get("filters");
+			defaultStr = (String) json.get("filterType");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(defaultStr);
+		return defaultStr;
+	}
+
 	private List<SearchDetails> mapSearchRequest(List<SearchDetails> searchDetails) {
 
 		List<SearchDetails> searchRequestList = null;
@@ -231,20 +258,22 @@ public class Report {
 //
 	public static void main(String[] args) {
 		Report rpt = new Report();
-	    Calendar calendar1 = Calendar.getInstance();
-	    calendar1.add(Calendar.HOUR_OF_DAY, 0);
-	    calendar1.add(Calendar.MINUTE, 1);
-	    Calendar calendar2 = Calendar.getInstance();
-	    calendar2.add(Calendar.HOUR_OF_DAY, 23);
-	    calendar2.add(Calendar.MINUTE, 59);
-		
-        Date daFrom = calendar1.getTime();
-        Date daTo = calendar2.getTime(); 
-
-        System.out.println(daFrom+" -- "+calendar1.getTimeInMillis());
-        System.out.println(daTo+" -- "+calendar2.getTimeInMillis());
-        System.out.println(calendar2.getTimeInMillis() - calendar1.getTimeInMillis());
+//	    Calendar calendar1 = Calendar.getInstance();
+//	    calendar1.add(Calendar.HOUR_OF_DAY, 0);
+//	    calendar1.add(Calendar.MINUTE, 1);
+//	    Calendar calendar2 = Calendar.getInstance();
+//	    calendar2.add(Calendar.HOUR_OF_DAY, 23);
+//	    calendar2.add(Calendar.MINUTE, 59);
+//		
+//        Date daFrom = calendar1.getTime();
+//        Date daTo = calendar2.getTime(); 
+//
+//        System.out.println(daFrom+" -- "+calendar1.getTimeInMillis());
+//        System.out.println(daTo+" -- "+calendar2.getTimeInMillis());
+//        System.out.println(calendar2.getTimeInMillis() - calendar1.getTimeInMillis());
 //		rpt.getSearchRequestsDetailsHM(daFrom, daTo);
+		String res = "{\"authtoken\":\"1616688361081\",\"appID\":\"mobile\",\"user_info\":{\"siteid\":null,\"locale\":\"en\",\"location\":null,\"device\":null,\"browserType\":null,\"ipaddress\":null,\"ifmobile\":null,\"mobileno\":null,\"mobileinfo\":null,\"longitude\":null,\"latitude\":null,\"ssoUserID\":null,\"userEmail\":null,\"firstName\":null,\"lastName\":null,\"userRole\":null},\"search_criteria\":{\"category\":\"2\",\"subcategory\":null,\"moresaving\":false,\"country\":null,\"nationality\":\"EXPAT\",\"sortby\":\"BudgetLow\",\"saveFilter\":null,\"filters\":{\"filterType\":\"Deepak\",\"contract\":\"\",\"monthlyBudget\":\"0\",\"filterConstant\":null,\"data\":\"0\",\"socialData\":\"0\",\"rechargeFrequency\":{\"filterReq\":[]},\"call_mins\":{\"flexi\":\"0\",\"national\":\"0\",\"international\":\"0\",\"onNet\":false,\"offNet\":false,\"allNet\":false,\"everyNet\":false},\"sms_mins\":{\"flexi\":\"0\",\"national\":\"0\",\"international\":\"0\"},\"deviceBrand\":null,\"deviceModels\":null,\"deviceMemory\":null,\"deviceColor\":null,\"operators\":{\"operator\":[]},\"dataperpage\":\"10\",\"pageNumber\":\"1\",\"countries\":{\"country\":[]},\"autoRenew\":\"false\",\"dataOnly\":\"false\",\"advance_Idd_Felxi\":null,\"advance_roamimg\":null,\"prepaidInline\":\"false\",\"prepaidTypeFilter\":{\"filterReq\":[{\"filter\":\"1\"}]},\"callPlanType\":null},\"selectedPlan\":null,\"compairedPlans\":null,\"callback\":null,\"actionKey\":null,\"actionValue\":null}}";
+		rpt.getfilterTypeStr(res);
 	}
 
 }
