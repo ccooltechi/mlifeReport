@@ -126,11 +126,23 @@ public class Report {
 		retValue.append("Countries ,");
 		retValue.append("CallPlanType ,");
 		retValue.append("Operator ,");
+
+		retValue.append("Service(HS),");
+		retValue.append("Area(HS),");
+		
 		retValue.append("action ,");
 		retValue.append("result ,");
 		retValue.append("Selected Plan ,");
 		retValue.append("Compaired Plans ,");
 		retValue.append("callback ,");
+		retValue.append("bestData ,");
+		retValue.append("bestFlexi ,");
+		retValue.append("bestNational ,");
+		retValue.append("bestInterNational ,");
+		retValue.append("bestBudget ,");
+		retValue.append("bestSavingMonthly ,");
+		retValue.append("bestSavingYearly ,");
+		retValue.append("currentOperator ,");
 		retValue.append("PlanReponse");
 		retValue.append("\n");
 
@@ -140,9 +152,9 @@ public class Report {
 			for (int i=0;i<searchDetails1.size();i++)
 			{
 				SearchDetailsChild searchDetailsChild = searchDetails1.get(i);
-				String loggedinuser = searchDetailsChild.getSearchId().getSsoUserId();
-				if ((null!=loggedinuser) && (loggedinuser.equalsIgnoreCase("NA")))
-					loggedinuser = searchDetailsChild.getSearchId().getUserEmailid();
+				String loggedinuser = searchDetailsChild.getSearchId().getUserEmailid(); // searchDetailsChild.getSearchId().getSsoUserId();
+//				if ((null!=loggedinuser) && (loggedinuser.equalsIgnoreCase("NA")))
+//					loggedinuser = searchDetailsChild.getSearchId().getUserEmailid();
 		
 				String fname = searchDetailsChild.getSearchId().getFirstName();
 				String lname = searchDetailsChild.getSearchId().getLastName();
@@ -154,6 +166,10 @@ public class Report {
 				operator = operator.replace(",", "|");
 				String planresponse = searchDetailsChild.getPlanReponse();
 				String planjsonResp = searchDetailsChild.getSearchId().getSearchRequest();
+				String areahs = searchDetailsChild.getHomeArea();
+				String serviceTSWhs=searchDetailsChild.getHomeServices();
+				if ((null!=serviceTSWhs) && (serviceTSWhs.trim().length()>0))
+					serviceTSWhs = serviceTSWhs.replace(",", "|");
 				
                 String defaultStr = "";
 				String checktokenX = searchDetailsChild.getToken()+"-"+searchDetailsChild.getRequestType();
@@ -166,7 +182,16 @@ public class Report {
 				}
 //                if (null!=action)
 //                	defaultStr = "USER-ACTION";
-                
+
+				String maxGeneFeatureTagData =searchDetailsChild.getMaxGeneFeatureTagData();
+				String maxGeneFeatureTagFlexi =searchDetailsChild.getMaxGeneFeatureTagFlexi();
+				String maxGeneFeatureTagNational =searchDetailsChild.getMaxGeneFeatureTagNational();
+				String maxGeneFeatureTagInterNational =searchDetailsChild.getMaxGeneFeatureTagInterNational();
+				String maxGeneFeatureTagBudget =searchDetailsChild.getMaxGeneFeatureTagBudget();
+				String maxGeneFeatureTagSavingFlat =searchDetailsChild.getMaxGeneFeatureTagSavingFlat();
+				String maxGeneFeatureTagSavingFlatYearly =searchDetailsChild.getMaxGeneFeatureTagSavingFlatYearly();
+				String currentOperator = searchDetailsChild.getCurrentOperator();
+				
 				retValue.append(searchDetailsChild.getToken()+",");
 				retValue.append(defaultStr+",");
 				retValue.append(searchDetailsChild.getId()+",");
@@ -199,11 +224,21 @@ public class Report {
 				retValue.append(searchDetailsChild.getCountries()+",");
 				retValue.append(searchDetailsChild.getCallPlanType()+",");
 				retValue.append(operator+",");
+				retValue.append(serviceTSWhs+",");
+				retValue.append(areahs+",");
 				retValue.append(action+",");
 				retValue.append(actionvalue+",");
 				retValue.append(searchDetailsChild.getSelectedPlan()+",");
 				retValue.append(searchDetailsChild.getCompairedPlans()+",");
 				retValue.append(callback+",");
+				retValue.append(maxGeneFeatureTagData+",");
+				retValue.append(maxGeneFeatureTagFlexi+",");
+				retValue.append(maxGeneFeatureTagNational+",");
+				retValue.append(maxGeneFeatureTagInterNational+",");
+				retValue.append(maxGeneFeatureTagBudget+",");
+				retValue.append(maxGeneFeatureTagSavingFlat+",");
+				retValue.append(maxGeneFeatureTagSavingFlatYearly+",");
+				retValue.append(currentOperator+",");
 				retValue.append(planresponse);
 				retValue.append("\n");
 

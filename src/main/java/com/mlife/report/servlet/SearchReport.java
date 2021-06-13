@@ -62,7 +62,7 @@ public class SearchReport extends HttpServlet {
 	        long difference = daTo.getTime() - daFrom.getTime();
 		    float daysBetween = (difference / (1000*60*60*24));
 		    System.out.println("daysBetween : "+daysBetween);
-		    if (daysBetween<=7)
+		    if (daysBetween<=2)
 		    {
 		        Report rpt = new Report();
 		        String filename = daFrom+"-"+daTo+"-SearchedData.xlsx";
