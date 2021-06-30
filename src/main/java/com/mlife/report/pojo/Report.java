@@ -152,13 +152,13 @@ public class Report {
 			for (int i=0;i<searchDetails1.size();i++)
 			{
 				SearchDetailsChild searchDetailsChild = searchDetails1.get(i);
-				String loggedinuser = searchDetailsChild.getSearchId().getUserEmailid(); // searchDetailsChild.getSearchId().getSsoUserId();
+				String loggedinuser = confescateMe(searchDetailsChild.getSearchId().getUserEmailid(),"EMAIL"); // searchDetailsChild.getSearchId().getSsoUserId();
 //				if ((null!=loggedinuser) && (loggedinuser.equalsIgnoreCase("NA")))
 //					loggedinuser = searchDetailsChild.getSearchId().getUserEmailid();
 		
 				String fname = searchDetailsChild.getSearchId().getFirstName();
 				String lname = searchDetailsChild.getSearchId().getLastName();
-				String phone = searchDetailsChild.getSearchId().getMobileNo();
+				String phone = confescateMe(searchDetailsChild.getSearchId().getMobileNo(),"PHONE");
 				String action = searchDetailsChild.getActionKey();
 				String actionvalue = searchDetailsChild.getActionValue();
 				String callback = searchDetailsChild.getCallbackPlan();
@@ -276,39 +276,52 @@ public class Report {
 		return searchRequestList;
 	}
 
-//	private List<SearchRequest> mapSearchRequestOLD(List<SearchDetails> searchDetails) {
-//
-//		List<SearchRequest> searchRequestList = null;
-//		if (null!=searchDetails)
-//		{
-//			searchRequestList = new ArrayList<SearchRequest>();
-//			for(SearchDetails item : searchDetails){
-//				SearchRequest searchRequest = new SearchRequest();
-//				searchRequest = (SearchRequest) convertJsonToObject(item.getSearchRequest(), searchRequest);
-//				searchRequestList.add(searchRequest);
-//			}
-//		}
-//		return searchRequestList;
-//	}
-//
+	private String confescateMe(String paramStr, String typex) {
+		String retVal  = paramStr;
+		logger.debug("paramStr = "+paramStr);
+		if ((paramStr.trim().length()>0) && (!paramStr.trim().equalsIgnoreCase("NA")))
+		{
+			if (typex.equalsIgnoreCase("EMAIL"))
+			{
+				int atPlace  =paramStr.indexOf("@");
+//				String updated = paramStr.substring(atPlace+1,paramStr.length());
+				String updated = "***";
+				paramStr = paramStr.substring(0,atPlace);
+//				for (int i=0;i<3;i++)
+//				{
+//					updated = updated.replace(updated.charAt(i)+"", "*");
+//				}
+			    retVal  = paramStr+"@"+updated;
+			}	    
+			else if (typex.equalsIgnoreCase("PHONE"))
+			{
+				String updated = paramStr.substring(3,paramStr.length());
+				paramStr = paramStr.substring(0,3);
+				for (int i=0;i<updated.length()-1;i++)
+				{
+					updated = updated.replaceFirst(updated.charAt(i)+"", "*");
+				}
+			    retVal  = paramStr+updated;
+			}
+		}
+		return retVal;
+	}
+
+
 	public static void main(String[] args) {
-		Report rpt = new Report();
-//	    Calendar calendar1 = Calendar.getInstance();
-//	    calendar1.add(Calendar.HOUR_OF_DAY, 0);
-//	    calendar1.add(Calendar.MINUTE, 1);
-//	    Calendar calendar2 = Calendar.getInstance();
-//	    calendar2.add(Calendar.HOUR_OF_DAY, 23);
-//	    calendar2.add(Calendar.MINUTE, 59);
-//		
-//        Date daFrom = calendar1.getTime();
-//        Date daTo = calendar2.getTime(); 
-//
-//        System.out.println(daFrom+" -- "+calendar1.getTimeInMillis());
-//        System.out.println(daTo+" -- "+calendar2.getTimeInMillis());
-//        System.out.println(calendar2.getTimeInMillis() - calendar1.getTimeInMillis());
-//		rpt.getSearchRequestsDetailsHM(daFrom, daTo);
-		String res = "{\"authtoken\":\"1616688361081\",\"appID\":\"mobile\",\"user_info\":{\"siteid\":null,\"locale\":\"en\",\"location\":null,\"device\":null,\"browserType\":null,\"ipaddress\":null,\"ifmobile\":null,\"mobileno\":null,\"mobileinfo\":null,\"longitude\":null,\"latitude\":null,\"ssoUserID\":null,\"userEmail\":null,\"firstName\":null,\"lastName\":null,\"userRole\":null},\"search_criteria\":{\"category\":\"2\",\"subcategory\":null,\"moresaving\":false,\"country\":null,\"nationality\":\"EXPAT\",\"sortby\":\"BudgetLow\",\"saveFilter\":null,\"filters\":{\"filterType\":\"Deepak\",\"contract\":\"\",\"monthlyBudget\":\"0\",\"filterConstant\":null,\"data\":\"0\",\"socialData\":\"0\",\"rechargeFrequency\":{\"filterReq\":[]},\"call_mins\":{\"flexi\":\"0\",\"national\":\"0\",\"international\":\"0\",\"onNet\":false,\"offNet\":false,\"allNet\":false,\"everyNet\":false},\"sms_mins\":{\"flexi\":\"0\",\"national\":\"0\",\"international\":\"0\"},\"deviceBrand\":null,\"deviceModels\":null,\"deviceMemory\":null,\"deviceColor\":null,\"operators\":{\"operator\":[]},\"dataperpage\":\"10\",\"pageNumber\":\"1\",\"countries\":{\"country\":[]},\"autoRenew\":\"false\",\"dataOnly\":\"false\",\"advance_Idd_Felxi\":null,\"advance_roamimg\":null,\"prepaidInline\":\"false\",\"prepaidTypeFilter\":{\"filterReq\":[{\"filter\":\"1\"}]},\"callPlanType\":null},\"selectedPlan\":null,\"compairedPlans\":null,\"callback\":null,\"actionKey\":null,\"actionValue\":null}}";
-		rpt.getfilterTypeStr(res);
+//		Report rpt = new Report();
+		String s = "9930015350";
+		String updated = s.substring(3,s.length());
+		s = s.substring(0,3);
+		for (int i=0;i<updated.length()-1;i++)
+		{
+			updated = updated.replaceFirst(updated.charAt(i)+"", "*");
+		}
+		System.out.println(s);
+		System.out.println(updated);
+	    String retVal  = s+updated;
+		System.out.println(retVal);
+		
 	}
 
 }
