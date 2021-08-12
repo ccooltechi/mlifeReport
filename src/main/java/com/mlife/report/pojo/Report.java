@@ -142,6 +142,7 @@ public class Report {
 		retValue.append("bestBudget ,");
 		retValue.append("bestSavingMonthly ,");
 		retValue.append("bestSavingYearly ,");
+		retValue.append("contract_length ,");
 		retValue.append("currentOperator ,");
 		retValue.append("PlanReponse");
 		retValue.append("\n");
@@ -279,30 +280,37 @@ public class Report {
 	private String confescateMe(String paramStr, String typex) {
 		String retVal  = paramStr;
 		logger.debug("paramStr = "+paramStr);
-		if ((paramStr.trim().length()>0) && (!paramStr.trim().equalsIgnoreCase("NA")))
+		try 
 		{
-			if (typex.equalsIgnoreCase("EMAIL"))
+			if ((paramStr.trim().length()>0) && (!paramStr.trim().equalsIgnoreCase("NA")))
 			{
-				int atPlace  =paramStr.indexOf("@");
+				if (typex.equalsIgnoreCase("EMAIL"))
+				{
+					int atPlace  =paramStr.indexOf("@");
 //				String updated = paramStr.substring(atPlace+1,paramStr.length());
-				String updated = "***";
-				paramStr = paramStr.substring(0,atPlace);
+					String updated = "***";
+					paramStr = paramStr.substring(0,atPlace);
 //				for (int i=0;i<3;i++)
 //				{
 //					updated = updated.replace(updated.charAt(i)+"", "*");
 //				}
-			    retVal  = paramStr+"@"+updated;
-			}	    
-			else if (typex.equalsIgnoreCase("PHONE"))
-			{
-				String updated = paramStr.substring(3,paramStr.length());
-				paramStr = paramStr.substring(0,3);
-				for (int i=0;i<updated.length()-1;i++)
+				    retVal  = paramStr+"@"+updated;
+				}	    
+				else if (typex.equalsIgnoreCase("PHONE"))
 				{
-					updated = updated.replaceFirst(updated.charAt(i)+"", "*");
+					String updated = paramStr.substring(3,paramStr.length());
+					paramStr = paramStr.substring(0,3);
+					for (int i=0;i<updated.length()-1;i++)
+					{
+						updated = updated.replaceFirst(updated.charAt(i)+"", "*");
+					}
+				    retVal  = paramStr+updated;
 				}
-			    retVal  = paramStr+updated;
 			}
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
 		}
 		return retVal;
 	}
